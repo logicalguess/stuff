@@ -1,4 +1,4 @@
-package com.github.rickardoberg.cqrs.domain;
+package com.github.rickardoberg.cqrs.event;
 
 import java.util.Date;
 import java.util.HashMap;

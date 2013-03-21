@@ -1,9 +1,9 @@
-package com.github.rickardoberg.cqrs.domain;
+package com.github.rickardoberg.cqrs.event;
 
 import java.util.Collection;
 import java.util.List;
 
-import com.github.rickardoberg.cqrs.event.Event;
+import com.github.rickardoberg.cqrs.domain.Identifier;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonUnwrapped;
 

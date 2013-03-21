@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.github.rickardoberg.cqrs.domain.Interaction;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.Interaction;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
 import com.github.rickardoberg.stuff.repository.LongIdentifier;

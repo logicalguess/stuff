@@ -9,7 +9,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.github.rickardoberg.cqrs.domain.Identifier;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
 
 public interface EventStore
 {

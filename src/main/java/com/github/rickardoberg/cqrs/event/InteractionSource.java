@@ -4,8 +4,6 @@
  */
 package com.github.rickardoberg.cqrs.event;
 
-import com.github.rickardoberg.cqrs.domain.Interaction;
-
 public interface InteractionSource
 {
     Interaction getInteraction();

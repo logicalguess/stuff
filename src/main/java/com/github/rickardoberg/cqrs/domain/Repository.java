@@ -7,6 +7,8 @@ package com.github.rickardoberg.cqrs.domain;
 import java.util.function.Block;
 import java.util.function.Function;
 
+import com.github.rickardoberg.cqrs.event.InteractionContext;
+
 public interface Repository
 {
     public static class RepositoryEntity<T extends Entity>

@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.function.Supplier;
 
-import com.github.rickardoberg.cqrs.domain.Interaction;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.Interaction;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
 import com.github.rickardoberg.stuff.domain.Task;
 import com.github.rickardoberg.stuff.usecase.Inbox;

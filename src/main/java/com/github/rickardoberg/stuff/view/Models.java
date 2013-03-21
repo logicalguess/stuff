@@ -1,6 +1,6 @@
 package com.github.rickardoberg.stuff.view;
 
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.InteractionContextSink;
 
 public class Models

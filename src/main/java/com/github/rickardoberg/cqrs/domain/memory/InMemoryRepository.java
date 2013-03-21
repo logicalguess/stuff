@@ -8,8 +8,8 @@ import java.util.function.Function;
 
 import com.github.rickardoberg.cqrs.domain.Entity;
 import com.github.rickardoberg.cqrs.domain.Identifier;
-import com.github.rickardoberg.cqrs.domain.Interaction;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.Interaction;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
 
 public class InMemoryRepository

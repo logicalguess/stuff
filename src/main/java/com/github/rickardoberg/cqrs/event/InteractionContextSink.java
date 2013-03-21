@@ -4,8 +4,6 @@
  */
 package com.github.rickardoberg.cqrs.event;
 
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
-
 public interface InteractionContextSink
 {
     void apply( InteractionContext interactionContext );

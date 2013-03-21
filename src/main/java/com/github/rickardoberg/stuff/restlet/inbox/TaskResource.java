@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.github.rickardoberg.cqrs.domain.Identifier;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
 import com.github.rickardoberg.stuff.domain.Task;
 import com.github.rickardoberg.stuff.repository.LongIdentifier;

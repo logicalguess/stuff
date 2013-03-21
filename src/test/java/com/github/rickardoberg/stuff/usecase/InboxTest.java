@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 
-import com.github.rickardoberg.cqrs.domain.Interaction;
+import com.github.rickardoberg.cqrs.event.Interaction;
 import com.github.rickardoberg.cqrs.domain.memory.InMemoryRepository;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.stuff.domain.Task;
@@ -46,7 +46,7 @@ public class InboxTest
         changeDescription.description =  "Old description";
         Inbox.NewTask newTask = new Inbox.NewTask( );
         newTask.changeDescription = changeDescription;
-        Task createdTask = Inbox.newTask().apply( inbox ).apply( newTask);
+        Task createdTask = Inbox.newTask().apply( inbox ).apply( newTask );
         inbox.bind( createdTask );
         createdTask.getInteraction();
 
