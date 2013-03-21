@@ -1,4 +1,4 @@
-package com.github.rickardoberg.stuff.restlet;
+package com.github.rickardoberg.stuff.rest;
 
 import org.restlet.Component;
 import org.restlet.data.Protocol;

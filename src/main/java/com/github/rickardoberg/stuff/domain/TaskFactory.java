@@ -1,8 +1,6 @@
-package com.github.rickardoberg.stuff.repository;
+package com.github.rickardoberg.stuff.domain;
 
 import java.util.function.Supplier;
-
-import com.github.rickardoberg.stuff.domain.Task;
 
 public class TaskFactory
     implements Supplier<Task>

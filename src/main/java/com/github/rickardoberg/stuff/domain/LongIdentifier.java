@@ -1,4 +1,4 @@
-package com.github.rickardoberg.stuff.repository;
+package com.github.rickardoberg.stuff.domain;
 
 import com.github.rickardoberg.cqrs.domain.Identifier;
 

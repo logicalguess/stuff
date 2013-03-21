@@ -11,7 +11,7 @@ import com.github.rickardoberg.cqrs.event.Interaction;
 import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
-import com.github.rickardoberg.stuff.repository.LongIdentifier;
+import com.github.rickardoberg.stuff.domain.LongIdentifier;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 

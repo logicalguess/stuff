@@ -13,7 +13,7 @@
     <servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
     <init-param>
       <param-name>org.restlet.component</param-name>
-      <param-value>com.github.rickardoberg.stuff.restlet.StuffComponent</param-value>
+      <param-value>com.github.rickardoberg.stuff.rest.StuffComponent</param-value>
     </init-param>
   </servlet>
 

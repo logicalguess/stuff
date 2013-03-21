@@ -1,4 +1,4 @@
-package com.github.rickardoberg.cqrs.domain.memory;
+package com.github.rickardoberg.cqrs.memory;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,16 +12,35 @@ import com.github.rickardoberg.cqrs.event.Interaction;
 import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
 
+/**
+ * In-memory implementation of Repository
+ */
 public class InMemoryRepository
     implements Repository
 {
-    private Map<String, Map<Identifier, RepositoryEntity<?>>> entities = new HashMap<>(  );
-
-    @Override
-    public synchronized <T extends Entity> Function<String, Function<Identifier, RepositoryEntity<T>>> findById()
+    private static class RepositoryEntity<T extends Entity>
     {
-        return clazz -> id -> (RepositoryEntity<T>) entities.get( clazz ).get( id );
+        private long version;
+        private T entity;
+
+        public RepositoryEntity( long version, T entity )
+        {
+            this.version = version;
+            this.entity = entity;
+        }
+
+        public long getVersion()
+        {
+            return version;
+        }
+
+        public T getEntity()
+        {
+            return entity;
+        }
     }
+
+    private Map<String, Map<Identifier, RepositoryEntity<?>>> entities = new HashMap<>(  );
 
     @Override
     public synchronized <T extends Entity> Function<String, Function<T, InteractionContext>> create( )
@@ -60,7 +79,7 @@ public class InMemoryRepository
                         throw new IllegalArgumentException( "Entity not found:"+ id );
                     }
 
-                    // Write lock it
+                    // Write lock entity
                     synchronized ( repositoryEntity )
                     {
                         block.accept( repositoryEntity.getEntity() );
@@ -71,6 +90,41 @@ public class InMemoryRepository
                         InteractionContext interactionContext = new InteractionContext( type, newVersion, new Date(), new HashMap<>(  ), interaction);
 
                         entityType.put( id, new RepositoryEntity<>(newVersion, repositoryEntity.getEntity()) );
+                        return interactionContext;
+                    }
+                };
+    }
+
+    @Override
+    public <T extends Entity> Function<String, Function<Identifier, Function<Block<T>, InteractionContext>>> delete()
+            throws IllegalArgumentException, IllegalStateException
+    {
+        return type -> id -> block ->
+                {
+                    Map<Identifier, RepositoryEntity<?>> entityType = entities.<Map<Identifier, RepositoryEntity>>get( type );
+                    if (entityType == null)
+                    {
+                        throw new IllegalArgumentException( "Type not found:"+type );
+                    }
+
+                    RepositoryEntity<T> repositoryEntity = (RepositoryEntity<T>) entityType.get( id );
+
+                    if (repositoryEntity == null)
+                    {
+                        throw new IllegalArgumentException( "Entity not found:"+ id );
+                    }
+
+                    // Write lock entity
+                    synchronized ( repositoryEntity )
+                    {
+                        block.accept( repositoryEntity.getEntity() );
+
+                        Interaction interaction = repositoryEntity.getEntity().getInteraction();
+
+                        long newVersion = repositoryEntity.getVersion() + 1;
+                        InteractionContext interactionContext = new InteractionContext( type, newVersion, new Date(), new HashMap<>(  ), interaction);
+
+                        entityType.remove( id );
                         return interactionContext;
                     }
                 };

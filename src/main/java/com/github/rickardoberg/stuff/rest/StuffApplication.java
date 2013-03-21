@@ -1,4 +1,4 @@
-package com.github.rickardoberg.stuff.restlet;
+package com.github.rickardoberg.stuff.rest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,31 +6,28 @@ import java.util.List;
 import java.util.Properties;
 
 import com.github.rickardoberg.cqrs.domain.Repository;
-import com.github.rickardoberg.cqrs.domain.memory.InMemoryRepository;
 import com.github.rickardoberg.cqrs.event.InteractionContextSink;
-import com.github.rickardoberg.stuff.repository.TaskFactory;
-import com.github.rickardoberg.stuff.restlet.inbox.InboxResource;
-import com.github.rickardoberg.stuff.restlet.inbox.TaskResource;
+import com.github.rickardoberg.cqrs.memory.InMemoryRepository;
+import com.github.rickardoberg.stuff.domain.TaskFactory;
+import com.github.rickardoberg.stuff.rest.inbox.InboxResource;
+import com.github.rickardoberg.stuff.rest.inbox.TaskResource;
 import com.github.rickardoberg.stuff.view.InboxModel;
 import com.github.rickardoberg.stuff.view.LoggingModel;
 import com.github.rickardoberg.stuff.view.Models;
 import org.apache.velocity.app.VelocityEngine;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
 import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
 
+/**
+ * To understand how Stuff works, start here. This class binds everything together.
+ */
 public class StuffApplication
     extends Application
 {
-    public StuffApplication()
-    {
-    }
-
     @Override
     public synchronized void start() throws Exception
     {
@@ -66,11 +63,5 @@ public class StuffApplication
 
 
         super.start();
-    }
-
-    @Override
-    public void handle( Request request, Response response )
-    {
-        super.handle( request, response );
     }
 }

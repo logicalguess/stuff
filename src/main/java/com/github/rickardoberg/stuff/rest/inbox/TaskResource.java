@@ -1,4 +1,4 @@
-package com.github.rickardoberg.stuff.restlet.inbox;
+package com.github.rickardoberg.stuff.rest.inbox;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -7,7 +7,7 @@ import com.github.rickardoberg.cqrs.domain.Identifier;
 import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
 import com.github.rickardoberg.stuff.domain.Task;
-import com.github.rickardoberg.stuff.repository.LongIdentifier;
+import com.github.rickardoberg.stuff.domain.LongIdentifier;
 import com.github.rickardoberg.stuff.usecase.Inbox;
 import com.github.rickardoberg.stuff.view.InboxModel;
 import com.github.rickardoberg.stuff.view.Models;

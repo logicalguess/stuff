@@ -1,4 +1,4 @@
-package com.github.rickardoberg.stuff.restlet.inbox;
+package com.github.rickardoberg.stuff.rest.inbox;
 
 import java.io.IOException;
 import java.io.Writer;

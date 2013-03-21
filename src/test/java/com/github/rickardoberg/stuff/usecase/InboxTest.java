@@ -6,13 +6,13 @@ import static org.junit.Assert.assertThat;
 import java.util.Iterator;
 
 import com.github.rickardoberg.cqrs.event.Interaction;
-import com.github.rickardoberg.cqrs.domain.memory.InMemoryRepository;
+import com.github.rickardoberg.cqrs.memory.InMemoryRepository;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.stuff.domain.Task;
 import com.github.rickardoberg.stuff.event.ChangedDescriptionEvent;
 import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
 import com.github.rickardoberg.stuff.event.DoneEvent;
-import com.github.rickardoberg.stuff.repository.TaskFactory;
+import com.github.rickardoberg.stuff.domain.TaskFactory;
 import org.junit.Test;
 
 public class InboxTest
