@@ -14,7 +14,7 @@ which then can be viewed through REST calls. And that's about it.
 Installation notes
 ------------------
 * Install Java 8 Lambda edition (that's the functional part)
-* Add the following (with your correct path) to your .m2/settings.xml file for Maven to find Java 8:
+* Add the following (with your correct path) to your .m2/settings.xml file for Maven to find Java 8 (do "View Raw" for easy copy&paste):
 ```
 <settings>
   <profiles>
@@ -31,6 +31,15 @@ Installation notes
 </settings>
 ```
 * Clone from GitHub
-* Run mvn install
-* Run the WAR in your favourite Container, or do mvn jetty:run
+* Run "mvn install"
+* Run the WAR in your favourite Container, or do "mvn jetty:run"
 * View http://localhost:8080/stuff/
+
+General notes
+-------------
+Apart from playing around with the above design and architectural patterns I'm also testing a bit of JavaScript and CSS.
+The idea is to make the app not a completely server-side generated website, and also not a single-page-app, but somewhere in between,
+with JavaScript and CSS pulling resources from a proper REST API into what you get on the root. This should make the whole thing
+a human-viewable webapp AND a proper REST API at the same time.
+
+I have no idea what I'm doing CSS-wise, so it looks like hell. Any pull requests to make it pretty will most likely be accepted :-)
