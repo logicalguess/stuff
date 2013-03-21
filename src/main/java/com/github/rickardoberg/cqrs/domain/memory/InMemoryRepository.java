@@ -15,29 +15,34 @@ import com.github.rickardoberg.cqrs.domain.Repository;
 public class InMemoryRepository
     implements Repository
 {
-    private Map<Class<?>, Map<Identifier, RepositoryEntity<?>>> entities = new HashMap<>(  );
+    private Map<String, Map<Identifier, RepositoryEntity<?>>> entities = new HashMap<>(  );
 
     @Override
-    public synchronized <T extends Entity> Function<Class<T>, Function<Identifier, RepositoryEntity<T>>> findById()
+    public synchronized <T extends Entity> Function<String, Function<Identifier, RepositoryEntity<T>>> findById()
     {
         return clazz -> id -> (RepositoryEntity<T>) entities.get( clazz ).get( id );
     }
 
     @Override
-    public synchronized <T extends Entity> void create( T entity )
+    public synchronized <T extends Entity> Function<String, Function<T, InteractionContext>> create( )
     {
-        Map<Identifier, RepositoryEntity<?>> entityType = entities.get( entity.getClass() );
-        if (entityType == null)
-        {
-            entityType = new HashMap<>(  );
-            entities.put( entity.getClass(), entityType );
-        }
+        return type -> entity ->
+                {
+                    Map<Identifier, RepositoryEntity<?>> entityType = entities.get( type );
+                    if (entityType == null)
+                    {
+                        entityType = new HashMap<>(  );
+                        entities.put( type, entityType );
+                    }
 
-        entityType.put( entity.getIdentifier(), new RepositoryEntity<T>(0, entity) );
+                    entityType.put( entity.getIdentifier(), new RepositoryEntity<T>(0, entity) );
+
+                    return new InteractionContext( type, -1, new Date(), new HashMap<>(  ), entity.getInteraction());
+                };
     }
 
     @Override
-    public <T extends Entity> Function<Class<T>, Function<Identifier, Function<Block<T>, InteractionContext>>> update()
+    public <T extends Entity> Function<String, Function<Identifier, Function<Block<T>, InteractionContext>>> update()
             throws IllegalArgumentException, IllegalStateException
     {
         return type -> id -> block ->
@@ -63,7 +68,7 @@ public class InMemoryRepository
                         Interaction interaction = repositoryEntity.getEntity().getInteraction();
 
                         long newVersion = repositoryEntity.getVersion() + 1;
-                        InteractionContext interactionContext = new InteractionContext( type.getSimpleName(), newVersion, new Date(), new HashMap<>(  ), interaction);
+                        InteractionContext interactionContext = new InteractionContext( type, newVersion, new Date(), new HashMap<>(  ), interaction);
 
                         entityType.put( id, new RepositoryEntity<>(newVersion, repositoryEntity.getEntity()) );
                         return interactionContext;

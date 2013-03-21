@@ -2,13 +2,10 @@ package com.github.rickardoberg.stuff.restlet.inbox;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collections;
-import java.util.Date;
 import java.util.function.Supplier;
 
-import com.github.rickardoberg.cqrs.event.Interaction;
-import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.domain.Repository;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.stuff.domain.Task;
 import com.github.rickardoberg.stuff.usecase.Inbox;
 import com.github.rickardoberg.stuff.view.InboxModel;
@@ -91,7 +88,6 @@ public class InboxResource extends Restlet
 
                 Form form = new Form(request.getEntity());
 
-                Interaction interaction = null;
                 switch (request.getAttributes().get( "command" ).toString())
                 {
                     case "newtask":
@@ -105,11 +101,8 @@ public class InboxResource extends Restlet
                                 apply( inbox ).
                                 apply( newTask );
 
-                        repository.create( task );
-
-                        interaction = task.getInteraction();
-
-                        models.apply( new InteractionContext( "task", -1 , new Date(), Collections.<String, String>emptyMap(), interaction ));
+                        InteractionContext interactionContext = repository.create( ).apply( "task" ).apply( task );
+                        models.apply( interactionContext );
 
                         break;
                     }

@@ -33,10 +33,10 @@ public interface Repository
         }
     }
 
-    <T extends Entity> void create( T entity );
+    <T extends Entity> Function<String, Function<T, InteractionContext>> create( );
 
-    <T extends Entity> Function<Class<T>, Function<Identifier, Function<Block<T>, InteractionContext>>> update()
+    <T extends Entity> Function<String, Function<Identifier, Function<Block<T>, InteractionContext>>> update()
             throws IllegalArgumentException, IllegalStateException;
 
-    <T extends Entity> Function<Class<T>, Function<Identifier, RepositoryEntity<T>>> findById();
+    <T extends Entity> Function<String, Function<Identifier, RepositoryEntity<T>>> findById();
 }

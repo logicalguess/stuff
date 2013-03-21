@@ -71,7 +71,7 @@ public class TaskResource
             {
                 Inbox inbox = (Inbox) request.getAttributes().get( "inbox" );
 
-                InteractionContext interactionContext = repository.<Task>update().apply( Task.class ).apply( identifier ).apply(
+                InteractionContext interactionContext = repository.<Task>update().apply("task" ).apply( identifier ).apply(
                     task ->
                     {
                         inbox.bind( task );
