@@ -15,7 +15,7 @@ Installation notes
 ------------------
 * Install Java 8 Lambda edition (that's the functional part)
 * Add the following (with your correct path) to your .m2/settings.xml file for Maven to find Java 8:
-```xml
+```
 <settings>
   <profiles>
     <profile>
