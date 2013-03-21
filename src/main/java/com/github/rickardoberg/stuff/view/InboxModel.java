@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.github.rickardoberg.cqrs.domain.Identifier;
-import com.github.rickardoberg.cqrs.domain.Interaction;
-import com.github.rickardoberg.cqrs.domain.InteractionContext;
+import com.github.rickardoberg.cqrs.event.Interaction;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.cqrs.event.InteractionContextSink;
 import com.github.rickardoberg.stuff.event.ChangedDescriptionEvent;
