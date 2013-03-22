@@ -4,7 +4,7 @@ import com.github.rickardoberg.cqrs.domain.Entity;
 import com.github.rickardoberg.cqrs.domain.Identifier;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.stuff.event.ChangedDescriptionEvent;
-import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
+import com.github.rickardoberg.stuff.event.CreatedEvent;
 import com.github.rickardoberg.stuff.event.DoneEvent;
 
 public class Task
@@ -15,12 +15,12 @@ public class Task
     public Task( Identifier identifier )
     {
         super( identifier );
-        add( new CreatedTaskEvent( identifier ) );
+        add( new CreatedEvent( ) );
     }
 
-    public void changeDescription( String description )
+    public void changeDescription( String desc)
     {
-        add( new ChangedDescriptionEvent( description ) );
+        add( new ChangedDescriptionEvent( ){{description=desc;}} );
     }
 
     public boolean isDone()
@@ -28,12 +28,12 @@ public class Task
         return done;
     }
 
-    public void setDone(boolean done)
+    public void setDone(boolean isDone)
     {
-        if (this.done != done)
+        if (this.done != isDone)
         {
-            this.done = done;
-            add( new DoneEvent(done) );
+            this.done = isDone;
+            add( new DoneEvent(){{this.done = isDone;}} );
         }
     }
 
@@ -41,7 +41,7 @@ public class Task
     {
         if (event instanceof DoneEvent)
         {
-            done = ((DoneEvent)event).isDone();
+            done = ((DoneEvent)event).done;
         }
     }
 }

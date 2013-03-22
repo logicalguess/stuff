@@ -5,6 +5,12 @@ Doing all the things mentioned in the title is hard, requires tons of libraries,
 to get right. Or is it? This sample app is an attempt at exploring if it's possible to do all of that while still
 keeping the code reasonably simple, and with minimal amount of libraries to help out.
 
+What it is
+----------
+The domain I have chosen is that of a to-do list manager, hence the name "Stuff". Usecases have been ripped from various
+GTD apps that already exist. It is simple enough that most people know how it works, yet complex enough that it can showcase
+some interesting design issues.
+
 Design
 ------
 The app is packaged as a WAR and implemented with Restlet for the REST support. REST resources will call DCI functions
@@ -43,3 +49,13 @@ with JavaScript and CSS pulling resources from a proper REST API into what you g
 a human-viewable webapp AND a proper REST API at the same time.
 
 I have no idea what I'm doing CSS-wise, so it looks like hell. Any pull requests to make it pretty will most likely be accepted :-)
+
+REST notes
+----------
+Unfortunately the notion of what REST is has become quite muddled. By "REST" I mean it in the ROCA sense: http://roca-style.org/.
+The general idea is that the resources exposed represent use cases in the application. This is different from the usual expose-the-domain
+design, which I consider to be an anti-pattern. For REST clients, the rule of thumb should be that they do largely two things:
+* Follow links
+* Submit forms
+Hypermedia will tell the client what links there are, what forms there are, and what URLs and methods to use for submission. No need to hardcode
+any of that in the client. In essence, the REST API is therefore basically an ugly website.

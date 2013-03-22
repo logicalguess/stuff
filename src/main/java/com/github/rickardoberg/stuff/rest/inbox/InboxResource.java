@@ -2,14 +2,10 @@ package com.github.rickardoberg.stuff.rest.inbox;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.function.Supplier;
 
-import com.github.rickardoberg.cqrs.domain.Repository;
-import com.github.rickardoberg.cqrs.event.InteractionContext;
-import com.github.rickardoberg.stuff.domain.Task;
+import com.github.rickardoberg.cqrs.domain.repository.Repository;
 import com.github.rickardoberg.stuff.usecase.Inbox;
 import com.github.rickardoberg.stuff.view.InboxModel;
-import com.github.rickardoberg.stuff.view.Models;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.restlet.Request;
@@ -23,21 +19,17 @@ import org.restlet.representation.WriterRepresentation;
 public class InboxResource extends Restlet
 {
     private final VelocityEngine velocity;
-    private Supplier<Task> taskFactory;
     private Repository repository;
     private TaskResource taskResource;
     private InboxModel model;
-    private Models models;
 
-    public InboxResource( VelocityEngine velocity, Supplier<Task> taskFactory, Repository repository, TaskResource
-            taskResource, InboxModel model, Models models )
+    public InboxResource( VelocityEngine velocity, Repository repository, TaskResource
+            taskResource, InboxModel model)
     {
         this.velocity = velocity;
-        this.taskFactory = taskFactory;
         this.repository = repository;
         this.taskResource = taskResource;
         this.model = model;
-        this.models = models;
     }
 
     @Override
@@ -49,7 +41,7 @@ public class InboxResource extends Restlet
         {
             if (!request.getMethod().isSafe())
             {
-                Inbox inbox = new Inbox(taskFactory);
+                Inbox inbox = new Inbox( );
                 request.getAttributes().put( "inbox", inbox );
             }
 
@@ -84,7 +76,7 @@ public class InboxResource extends Restlet
                 }
             } else
             {
-                Inbox inbox = new Inbox(taskFactory);
+                Inbox inbox = new Inbox(  );
 
                 Form form = new Form(request.getEntity());
 
@@ -92,17 +84,17 @@ public class InboxResource extends Restlet
                 {
                     case "newtask":
                     {
-                        Inbox.ChangeDescription changeDescription = new Inbox.ChangeDescription(  );
-                        changeDescription.description = form.getFirstValue( "description" );
-                        Inbox.NewTask newTask = new Inbox.NewTask( );
-                        newTask.changeDescription = changeDescription;
+                        repository.create().apply( "task" ).apply(
+                                id ->
+                                {
+                                    Inbox.ChangeDescription changeDescription = new Inbox.ChangeDescription(  );
+                                    changeDescription.description = form.getFirstValue( "description" );
+                                    Inbox.NewTask newTask = new Inbox.NewTask( );
+                                    newTask.id = id;
+                                    newTask.changeDescription = changeDescription;
 
-                        Task task = Inbox.newTask().
-                                apply( inbox ).
-                                apply( newTask );
-
-                        InteractionContext interactionContext = repository.create( ).apply( "task" ).apply( task );
-                        models.apply( interactionContext );
+                                    return Inbox.newTask().apply( inbox ).apply( newTask );
+                                });
 
                         break;
                     }

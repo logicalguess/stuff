@@ -1,38 +1,32 @@
 package com.github.rickardoberg.stuff.usecase;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import com.github.rickardoberg.cqrs.domain.Identifier;
 import com.github.rickardoberg.cqrs.event.InteractionSource;
 import com.github.rickardoberg.stuff.domain.Task;
 
 public class Inbox
 {
-    private Supplier<Task> taskFactory;
+    private Task task;
 
-    private Task selected;
-
-    public Inbox( Supplier<Task> taskFactory )
+    public void select( Task task )
     {
-        this.taskFactory = taskFactory;
-    }
-
-    public void bind(Task task)
-    {
-        this.selected = task;
+        this.task = task;
     }
 
     public static class NewTask
     {
         public ChangeDescription changeDescription;
+        public Identifier id;
     }
 
     public static Function<Inbox, Function<NewTask, Task>> newTask()
     {
         return inbox -> newTask ->
                 {
-                    Task task = inbox.taskFactory.get();
-                    inbox.bind( task );
+                    Task task = new Task(newTask.id);
+                    inbox.select( task );
                     changeDescription().apply( inbox ).apply( newTask.changeDescription );
                     return task;
                 };
@@ -47,9 +41,9 @@ public class Inbox
     {
         return inbox -> changeDescription ->
                 {
-                    inbox.selected.changeDescription(changeDescription.description);
+                    inbox.task.changeDescription( changeDescription.description );
 
-                    return inbox.selected;
+                    return inbox.task;
                 };
     }
 
@@ -62,8 +56,8 @@ public class Inbox
     {
         return inbox -> done ->
                 {
-                    inbox.selected.setDone( done.done);
-                    return inbox.selected;
+                    inbox.task.setDone( done.done );
+                    return inbox.task;
                 };
     }
 }

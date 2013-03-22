@@ -1,26 +1,36 @@
 package com.github.rickardoberg.stuff.rest;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
+import java.util.function.Function;
 
-import com.github.rickardoberg.cqrs.domain.Repository;
-import com.github.rickardoberg.cqrs.event.InteractionContextSink;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.rickardoberg.cqrs.domain.Entity;
+import com.github.rickardoberg.cqrs.domain.Identifier;
+import com.github.rickardoberg.cqrs.domain.repository.Repository;
+import com.github.rickardoberg.cqrs.event.Event;
+import com.github.rickardoberg.cqrs.event.InteractionContext;
+import com.github.rickardoberg.cqrs.memory.FileEventStorage;
+import com.github.rickardoberg.cqrs.memory.InMemoryEventStore;
 import com.github.rickardoberg.cqrs.memory.InMemoryRepository;
-import com.github.rickardoberg.stuff.domain.TaskFactory;
+import com.github.rickardoberg.cqrs.memory.InteractionContextDeserializer;
+import com.github.rickardoberg.cqrs.memory.InteractionContextSerializer;
+import com.github.rickardoberg.cqrs.memory.JacksonEvent;
+import com.github.rickardoberg.stuff.domain.Project;
+import com.github.rickardoberg.stuff.domain.Task;
 import com.github.rickardoberg.stuff.rest.inbox.InboxResource;
 import com.github.rickardoberg.stuff.rest.inbox.TaskResource;
 import com.github.rickardoberg.stuff.view.InboxModel;
 import com.github.rickardoberg.stuff.view.LoggingModel;
-import com.github.rickardoberg.stuff.view.Models;
 import org.apache.velocity.app.VelocityEngine;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.restlet.Application;
 import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
 import org.restlet.routing.Router;
 import org.restlet.routing.Template;
+import org.slf4j.LoggerFactory;
 
 /**
  * To understand how Stuff works, start here. This class binds everything together.
@@ -28,6 +38,10 @@ import org.restlet.routing.Template;
 public class StuffApplication
     extends Application
 {
+
+    private InMemoryEventStore eventStore;
+    private FileEventStorage storage;
+
     @Override
     public synchronized void start() throws Exception
     {
@@ -39,18 +53,46 @@ public class StuffApplication
 
         VelocityEngine velocity = new VelocityEngine( props );
 
-        Repository repository = new InMemoryRepository();
+        Function<String, Function<Identifier, ? extends Entity>> entityFactory =
+                type -> identifier ->
+                        {
+                            switch ( type )
+                            {
+                                case "task":
+                                    return new Task(identifier);
 
-        List<InteractionContextSink> modelList = new ArrayList<>(  );
+                                case "project":
+                                    return new Project(identifier);
+                            }
+
+                            throw new IllegalArgumentException( type );
+                        };
+
+        eventStore = new InMemoryEventStore(  );
+        Repository repository = new InMemoryRepository( eventStore, eventStore, entityFactory);
+
         InboxModel inboxModel = new InboxModel();
-        modelList.add( inboxModel );
+        eventStore.addInteractionContextSink( inboxModel );
 
         ObjectMapper mapper = new ObjectMapper();
-        modelList.add( new LoggingModel(mapper) );
-        Models models = new Models(modelList);
+        mapper.registerModule( new SimpleModule("EventSourcing", new Version(1,0,0, null, "eventsourcing", "eventsourcing")).
+                addSerializer( InteractionContext.class, new InteractionContextSerializer() ).
+                addDeserializer( InteractionContext.class, new InteractionContextDeserializer() ).setMixInAnnotation( Event.class, JacksonEvent.class )
+                );
 
-        InboxResource inboxResource = new InboxResource( velocity, new TaskFactory(), repository,
-                                                         new TaskResource( velocity, repository, inboxModel, models ), inboxModel, models );
+        File file = new File( "events.log" ).getAbsoluteFile();
+        LoggerFactory.getLogger( getClass() ).info( "Event log:"+file );
+        storage = new FileEventStorage(mapper);
+
+        if (file.exists())
+            storage.load( file, eventStore );
+
+        storage.save( file, eventStore );
+
+        eventStore.addInteractionContextSink( new LoggingModel( mapper ) );
+
+        InboxResource inboxResource = new InboxResource( velocity, repository,
+                                                         new TaskResource( velocity, repository, inboxModel ), inboxModel );
         router.attach( "inbox/{task}/{command}", inboxResource );
         router.attach( "inbox/{task}/", inboxResource );
         router.attach( "inbox/{command}", inboxResource );
@@ -61,7 +103,15 @@ public class StuffApplication
 
         setInboundRoot( router );
 
-
         super.start();
     }
+
+    @Override
+    public synchronized void stop() throws Exception
+    {
+        super.stop();
+
+        storage.close();
+    }
+
 }

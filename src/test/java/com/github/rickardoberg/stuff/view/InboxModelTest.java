@@ -7,11 +7,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.github.rickardoberg.cqrs.domain.Identifier;
+import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.cqrs.event.Interaction;
 import com.github.rickardoberg.cqrs.event.InteractionContext;
-import com.github.rickardoberg.cqrs.event.Event;
-import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
-import com.github.rickardoberg.stuff.domain.LongIdentifier;
+import com.github.rickardoberg.stuff.event.CreatedEvent;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
@@ -25,8 +25,8 @@ public class InboxModelTest
 
         // When
         List<Event> events = new ArrayList<>(  );
-        LongIdentifier id = new LongIdentifier( 0 );
-        events.add( new CreatedTaskEvent( id ) );
+        Identifier id = new Identifier( 0 );
+        events.add( new CreatedEvent( ) );
         InteractionContext context = new InteractionContext( "task",-1 , new Date(), Collections.<String, String>emptyMap(), new Interaction(id, events ) );
         model.apply( context );
 

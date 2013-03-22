@@ -10,7 +10,7 @@ import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.Event;
 import com.github.rickardoberg.cqrs.event.InteractionContextSink;
 import com.github.rickardoberg.stuff.event.ChangedDescriptionEvent;
-import com.github.rickardoberg.stuff.event.CreatedTaskEvent;
+import com.github.rickardoberg.stuff.event.CreatedEvent;
 import com.github.rickardoberg.stuff.event.DoneEvent;
 
 public class InboxModel
@@ -25,7 +25,7 @@ public class InboxModel
 
         for ( Event event : interaction.getEvents() )
         {
-            if (event instanceof CreatedTaskEvent)
+            if (event instanceof CreatedEvent )
             {
                 InboxTask task = new InboxTask()
                 {{
@@ -39,7 +39,7 @@ public class InboxModel
                 tasks.put( interaction.getIdentifier(), new InboxTask()
                 {{
                         copy( tasks.get( interaction.getIdentifier() ) );
-                        setDescription( changedDescriptionEvent.getDescription() );
+                        setDescription( changedDescriptionEvent.description );
                     }} );
             }
             else if (event instanceof DoneEvent)
@@ -48,7 +48,7 @@ public class InboxModel
                 tasks.put( interaction.getIdentifier(), new InboxTask()
                 {{
                         copy( tasks.get( interaction.getIdentifier() ) );
-                        setDone( doneEvent.isDone() );
+                        setDone( doneEvent.done );
                     }} );
             }
         }

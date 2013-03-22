@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.github.rickardoberg.cqrs.domain.Identifier;
-import com.github.rickardoberg.cqrs.event.InteractionContext;
-import com.github.rickardoberg.cqrs.domain.Repository;
+import com.github.rickardoberg.cqrs.domain.repository.Repository;
 import com.github.rickardoberg.stuff.domain.Task;
-import com.github.rickardoberg.stuff.domain.LongIdentifier;
 import com.github.rickardoberg.stuff.usecase.Inbox;
 import com.github.rickardoberg.stuff.view.InboxModel;
-import com.github.rickardoberg.stuff.view.Models;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.restlet.Request;
@@ -27,14 +24,12 @@ public class TaskResource
     private VelocityEngine velocity;
     private Repository repository;
     private InboxModel model;
-    private Models models;
 
-    public TaskResource( VelocityEngine velocity, Repository repository, InboxModel model, Models models )
+    public TaskResource( VelocityEngine velocity, Repository repository, InboxModel model )
     {
         this.velocity = velocity;
         this.repository = repository;
         this.model = model;
-        this.models = models;
     }
 
     @Override
@@ -44,7 +39,7 @@ public class TaskResource
 
         try
         {
-            final Identifier identifier = new LongIdentifier( Long.parseLong( request.getAttributes().get( "task" ).toString()));
+            final Identifier identifier = new Identifier( Long.parseLong( request.getAttributes().get( "task" ).toString()));
 
             if ( request.getMethod().isSafe())
             {
@@ -71,10 +66,10 @@ public class TaskResource
             {
                 Inbox inbox = (Inbox) request.getAttributes().get( "inbox" );
 
-                InteractionContext interactionContext = repository.<Task>update().apply("task" ).apply( identifier ).apply(
+                repository.<Task>update().apply("task" ).apply( identifier ).apply(
                     task ->
                     {
-                        inbox.bind( task );
+                        inbox.select( task );
 
                         Form form = new Form( request.getEntity() );
 
@@ -107,17 +102,11 @@ public class TaskResource
                             {
                                 response.setStatus( Status.CLIENT_ERROR_BAD_REQUEST,
                                         "Unknown command:" + command );
-                                return;
                             }
                         }
                     }
                 );
 
-
-                if (interactionContext.getInteraction().getEvents().iterator().hasNext())
-                {
-                    models.apply( interactionContext );
-                }
 
                 response.redirectSeeOther( request.getReferrerRef() );
             }

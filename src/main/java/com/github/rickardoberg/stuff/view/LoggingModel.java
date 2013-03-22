@@ -3,11 +3,12 @@ package com.github.rickardoberg.stuff.view;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.MappingJsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.rickardoberg.cqrs.event.InteractionContext;
 import com.github.rickardoberg.cqrs.event.InteractionContextSink;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.map.MappingJsonFactory;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.LoggerFactory;
 
 public class LoggingModel
     implements InteractionContextSink
@@ -31,7 +32,7 @@ public class LoggingModel
             mapper.writeValue(jsonGenerator, interactionContext);
             sw.close();
 
-            System.out.println(sw.toString());
+            LoggerFactory.getLogger( LoggingModel.class ).info( sw.toString() );
         }
         catch ( IOException e )
         {
