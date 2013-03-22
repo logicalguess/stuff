@@ -24,7 +24,10 @@ import com.github.rickardoberg.stuff.rest.inbox.InboxResource;
 import com.github.rickardoberg.stuff.rest.inbox.TaskResource;
 import com.github.rickardoberg.stuff.view.InboxModel;
 import com.github.rickardoberg.stuff.view.LoggingModel;
+import com.github.rickardoberg.stuff.view.Neo4jInboxModel;
 import org.apache.velocity.app.VelocityEngine;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.restlet.Application;
 import org.restlet.data.Reference;
 import org.restlet.resource.Directory;
@@ -41,6 +44,7 @@ public class StuffApplication
 
     private InMemoryEventStore eventStore;
     private FileEventStorage storage;
+    private GraphDatabaseService graphDb;
 
     @Override
     public synchronized void start() throws Exception
@@ -71,7 +75,9 @@ public class StuffApplication
         eventStore = new InMemoryEventStore(  );
         Repository repository = new InMemoryRepository( eventStore, eventStore, entityFactory);
 
-        InboxModel inboxModel = new InboxModel();
+        graphDb = new GraphDatabaseFactory().newEmbeddedDatabase( "graphdb" );
+
+        InboxModel inboxModel = new Neo4jInboxModel(graphDb);
         eventStore.addInteractionContextSink( inboxModel );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -112,6 +118,8 @@ public class StuffApplication
         super.stop();
 
         storage.close();
+
+        graphDb.shutdown();
     }
 
 }

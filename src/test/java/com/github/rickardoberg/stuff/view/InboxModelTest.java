@@ -21,7 +21,7 @@ public class InboxModelTest
     public void givenEmptyModelWhenCreatedTaskThenModelHasTask()
     {
         // Given
-        InboxModel model = new InboxModel();
+        InboxModel model = new InMemoryInboxModel();
 
         // When
         List<Event> events = new ArrayList<>(  );
